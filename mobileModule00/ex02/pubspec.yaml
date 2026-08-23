@@ -1,0 +1,14 @@
+name: ex02
+description: Exercise 02 - Calculator UI (print button labels to debug console)
+publish_to: none
+version: 0.0.1
+environment:
+  sdk: ">=2.17.0 <4.0.0"
+  flutter: ">=2.10.0"
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.2
+
+flutter:
+  uses-material-design: true
