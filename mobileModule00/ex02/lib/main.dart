@@ -103,8 +103,8 @@ class _CalcButton extends StatelessWidget {
       padding: const EdgeInsets.all(6.0),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          primary: emphasize ? color : Colors.blueGrey.shade200,
-          onPrimary: Colors.black87,
+          backgroundColor: emphasize ? color : Colors.blueGrey.shade200,
+          foregroundColor: Colors.black87,
           elevation: 0,
         ),
         onPressed: onPressed,
