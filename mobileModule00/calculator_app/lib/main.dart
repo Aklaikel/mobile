@@ -8,10 +8,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Calculator App',
-      home: const CalculatorPage(),
-    );
+    return MaterialApp(title: 'Calculator App', home: const CalculatorPage());
   }
 }
 
@@ -27,10 +24,25 @@ class _CalculatorPageState extends State<CalculatorPage> {
   String _result = '0';
 
   static const List<String> _buttons = [
-    '7', '8', '9', 'C',
-    '4', '5', '6', '+',
-    '1', '2', '3', '×',
-    '0', '.', '00', '/',
+    '7',
+    '8',
+    '9',
+    'C',
+    'AC',
+    '4',
+    '5',
+    '6',
+    '+',
+    '-',
+    '1',
+    '2',
+    '3',
+    '×',
+    '/',
+    '0',
+    '.',
+    '00',
+    '=',
   ];
 
   void _onButtonPressed(String label) {
@@ -107,8 +119,23 @@ class _CalculatorPageState extends State<CalculatorPage> {
         builder: (context, constraints) {
           final isNarrow = constraints.maxWidth < 500;
           final contentWidth = isNarrow ? constraints.maxWidth : 480.0;
+          final isCompactHeight = constraints.maxHeight < 400;
+          final displayHeight = isCompactHeight
+              ? constraints.maxHeight * 0.3
+              : (constraints.maxHeight * 0.34).clamp(120.0, 220.0).toDouble();
+          final cellWidth = (contentWidth - 24) / 5;
+          final baseAspectRatio = isNarrow ? 2.5 : 3.5;
+          final idealKeypadHeight = cellWidth / baseAspectRatio * 4 + 18;
+          final availableKeypadHeight = constraints.maxHeight - displayHeight;
+          final keypadHeight = idealKeypadHeight < availableKeypadHeight
+              ? idealKeypadHeight
+              : availableKeypadHeight;
+          final rowHeight = (keypadHeight - 18) / 4;
+          final buttonAspectRatio =
+              rowHeight > 0 ? cellWidth / rowHeight : baseAspectRatio;
 
-          return Center(
+          return Align(
+            alignment: Alignment.topCenter,
             child: ConstrainedBox(
               constraints: BoxConstraints(maxWidth: contentWidth),
               child: Column(
@@ -116,10 +143,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                 children: [
                   // display area
                   Container(
-                    height: isNarrow ? 170 : 200,
+                    height: displayHeight,
                     width: double.infinity,
                     color: Colors.blueGrey.shade800,
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       mainAxisAlignment: MainAxisAlignment.end,
@@ -129,7 +159,10 @@ class _CalculatorPageState extends State<CalculatorPage> {
                           reverse: true,
                           child: Text(
                             _expression.isEmpty ? '0' : _expression,
-                            style: TextStyle(color: Colors.white70, fontSize: 18),
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontSize: 18,
+                            ),
                             textAlign: TextAlign.right,
                           ),
                         ),
@@ -142,38 +175,18 @@ class _CalculatorPageState extends State<CalculatorPage> {
                     ),
                   ),
 
-                  // Top control row: AC and =
+                  // Buttons grid
                   Container(
                     color: Colors.blueGrey.shade300,
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        TextButton(
-                          onPressed: () => _onButtonPressed('AC'),
-                          child: const Text('AC', style: TextStyle(color: Colors.red)),
-                        ),
-                        const SizedBox(width: 12),
-                        ElevatedButton(
-                          onPressed: () => _onButtonPressed('='),
-                          child: const Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 14.0, vertical: 10),
-                            child: Text('=', style: TextStyle(fontSize: 16)),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  // Buttons grid
-                  Expanded(
-                    child: Container(
-                      color: Colors.blueGrey.shade300,
+                    child: SizedBox(
+                      height: keypadHeight,
                       child: GridView.count(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: EdgeInsets.zero,
                         physics: const NeverScrollableScrollPhysics(),
-                        crossAxisCount: 4,
-                        childAspectRatio: isNarrow ? 2.2 : 3.5,
+                        crossAxisCount: 5,
+                        crossAxisSpacing: 6,
+                        mainAxisSpacing: 6,
+                        childAspectRatio: buttonAspectRatio,
                         children: _buildButtons(),
                       ),
                     ),
@@ -189,17 +202,18 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
   List<Widget> _buildButtons() {
     return _buttons.map((label) {
-      final isOperator = ['+', '-', '×', '/', '='].contains(label);
-      final isControl = label == 'C';
+      final isOperator = ['+', '-', '×', '/'].contains(label);
+      final isControl = ['C', 'AC', '='].contains(label);
       final color = isOperator ? Colors.blueGrey.shade100 : Colors.transparent;
 
       return Padding(
-        padding: const EdgeInsets.all(6.0),
+        padding: const EdgeInsets.all(2.0),
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
             backgroundColor: isControl ? Colors.redAccent.shade100 : color,
             foregroundColor: Colors.black87,
             elevation: 0,
+            padding: EdgeInsets.zero,
           ),
           onPressed: () => _onButtonPressed(label),
           child: Text(label, style: const TextStyle(fontSize: 18)),
