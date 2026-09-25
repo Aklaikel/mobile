@@ -18,9 +18,9 @@ class CalculatorPage extends StatelessWidget {
   const CalculatorPage({Key? key}) : super(key: key);
 
   static const List<String> buttons = [
-    '7', '8', '9', 'C',
-    '4', '5', '6', '+',
-    '1', '2', '3', '×',
+    '7', '8', '9', 'C', 'AC',
+    '4', '5', '6', '+', '-',
+    '1', '2', '3', '×', '/',
     '0', '.', '00', '=',
   ];
 
@@ -67,10 +67,10 @@ class CalculatorPage extends StatelessWidget {
                     child: GridView.count(
                       physics: const NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
-                      crossAxisCount: 4,
+                      crossAxisCount: 5,
                       childAspectRatio: isNarrow ? 2.5 : 3.5,
                       children: buttons.map((label) {
-                        final isSpecial = (label == 'C' || label == '=' || label == '00' || label == '.');
+                        final isSpecial = (label == 'C' || label == 'AC' || label == '=' || label == '00' || label == '.');
                         return _CalcButton(
                           label: label,
                           onPressed: () => _onButtonPressed(label),
